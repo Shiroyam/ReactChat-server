@@ -3,7 +3,7 @@ import Message from "../models/message.models";
 
 class DialogController {
   find = (req: any, res: any): void => {
-    const userId = req.body._id;
+    const userId = req.params.id;
 
     DialogModel.find()
       .or([{ author: userId }, { partner: userId }])
@@ -29,6 +29,7 @@ class DialogController {
       const postData = {
         author: req.body._id,
         partner: req.body.partner,
+        text: req.body.text,
       };
 
       const findDialog = await DialogModel.findOne({
@@ -45,16 +46,22 @@ class DialogController {
 
       const dialog = new DialogModel(postData);
 
-      await dialog.save();
-
       const message = new Message({
         text: req.body.text,
         author: req.body._id,
         dialog: dialog._id,
       });
 
-      const doc = await message.save();
-      res.json(doc);
+      await message.save();
+      dialog.lastMessage = message._id;
+      
+      await dialog.save();
+
+
+      res.json({
+        message: "Dialog create",
+      });
+
     } catch (error) {
       console.log(error);
       res.status(404).json({
