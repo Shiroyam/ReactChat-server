@@ -1,4 +1,5 @@
 import express from "express";
+import cors from "cors";
 import dotenv from "dotenv";
 import mongoose from "mongoose";
 import UserController from "./controllers/user.controller";
@@ -13,20 +14,21 @@ const Dialog = new DialogController();
 const Message = new MessageController();
 
 const app = express();
+app.use(cors());
 app.use(express.json());
 
 app.post("/user/create", User.create);
 app.post("/user/login", User.login);
 app.get("/user/:id", User.find);
-app.delete("/user/:id", User.delete);
+app.delete("/user/:id", authCheck, User.delete);
 
-app.post("/dialog/create", authCheck ,Dialog.create);
-app.get("/dialog/:id", Dialog.find);
-app.delete("/dialog/:id", Dialog.delete);
+app.post("/dialog/create", authCheck, Dialog.create);
+app.get("/dialog/:id", authCheck, Dialog.find);
+app.delete("/dialog/:id", authCheck, Dialog.delete);
 
-app.post("/message/create", Message.create);
-app.get("/message/:id", Message.find);
-app.delete("/message/:id", Message.delete);
+app.post("/message/create", authCheck, Message.create);
+app.get("/message/:id", authCheck, Message.find);
+app.delete("/message/:id", authCheck, Message.delete);
 
 const PORT: number = process.env.PORT ? Number(process.env.PORT) : 3004;
 const DB_URL =
