@@ -8,6 +8,18 @@ const generateAccessToken = (id: string) => {
 };
 
 class UserController {
+  findAll = async (req: any, res: any): Promise<void> => {
+    try {
+      const doc = await User.find({});
+      return res.json(doc);
+    } catch (error) {
+      console.log(error);
+      return res.status(404).json({
+        message: "User not found",
+      });
+    }
+  };
+
   find = async (req: any, res: any): Promise<void> => {
     try {
       const id: string = req.params.id;

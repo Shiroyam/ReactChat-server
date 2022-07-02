@@ -5,8 +5,7 @@ class DialogController {
   find = (req: any, res: any): void => {
     const userId = req.params.id;
 
-    DialogModel.find()
-      .or([{ author: userId }, { partner: userId }])
+    DialogModel.find({$or : [{ author: userId }, { partner: userId }]})
       .populate(["author", "partner"])
       .populate({
         path: "lastMessage",
@@ -48,20 +47,18 @@ class DialogController {
 
       const message = new Message({
         text: req.body.text,
-        author: req.body._id,
+        user: req.body._id,
         dialog: dialog._id,
       });
 
       await message.save();
       dialog.lastMessage = message._id;
-      
-      await dialog.save();
 
+      await dialog.save();
 
       res.json({
         message: "Dialog create",
       });
-
     } catch (error) {
       console.log(error);
       res.status(404).json({

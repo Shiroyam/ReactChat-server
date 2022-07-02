@@ -5,7 +5,7 @@ import mongoose from "mongoose";
 import UserController from "./controllers/user.controller";
 import DialogController from "./controllers/Dialog.controller";
 import MessageController from "./controllers/Message.controller";
-import { authCheck } from "./middlewaree/authCheck";
+import { authCheck } from "./middleware/authCheck";
 
 dotenv.config();
 
@@ -20,6 +20,7 @@ app.use(express.json());
 app.post("/user/create", User.create);
 app.post("/user/login", User.login);
 app.get("/user/:id", User.find);
+app.get("/user", authCheck ,User.findAll)
 app.delete("/user/:id", authCheck, User.delete);
 
 app.post("/dialog/create", authCheck, Dialog.create);
